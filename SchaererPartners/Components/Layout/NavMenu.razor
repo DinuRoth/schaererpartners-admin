@@ -1,0 +1,45 @@
+﻿@inject IUserDB UserDB
+@inject SessionService SessionService
+
+@namespace SchaererPartners
+
+<MudNavMenu>
+	@if (SessionService.IsLoggedIn)
+	{
+		<MudNavLink Href="/Profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">@SessionService.User?.Email</MudNavLink>
+		<MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/Dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+
+		@if (new Event (UserDB).Permits (Permission.Read)) {
+			<MudNavLink Icon=@Icons.Material.Filled.DataObject Href="/List/xtObjekt" Match="NavLinkMatch.Prefix">xtObjekt</MudNavLink>
+		}
+		@if (new Reservation (UserDB).Permits (Permission.Read)) {
+			<MudNavLink Icon=@Icons.Material.Filled.Navigation Href="/List/xtNavigation" Match="NavLinkMatch.Prefix">xtNavigation</MudNavLink>
+		}
+		@if (new Belegung (UserDB).Permits (Permission.Read)) {
+			<MudNavLink Icon=@Icons.Material.Filled.Language Href="/List/xtSprache" Match="NavLinkMatch.Prefix">xtSprache</MudNavLink>
+		}
+
+		@if (new xtNewsletter (UserDB).Permits (Permission.Read)) {
+			<MudNavGroup Title="Newsletter">
+				<MudNavLink Icon="@Icons.Material.Filled.Newspaper" Href="/List/xtNewsletter" Match="NavLinkMatch.Prefix">Newsletter</MudNavLink>
+				<MudNavLink Icon="@Icons.Material.Filled.MarkEmailRead" Href="/List/xtNewsletterAbo" Match="NavLinkMatch.Prefix">NewsletterAbo</MudNavLink>
+				<MudNavLink Icon="@Icons.Material.Filled.Send" Href="/SendNewsletter" Match="NavLinkMatch.Prefix">Newsletter versenden</MudNavLink>
+			</MudNavGroup>
+		}
+
+		@if (new xtNavigation (UserDB).Permits (Permission.Change)) {
+			<MudNavGroup Title="Website">
+				<MudNavLink Icon="@Icons.Material.Filled.AutoAwesomeMosaic" Href="/List/Galerie" Match="NavLinkMatch.Prefix">Galerie</MudNavLink>
+			</MudNavGroup>
+		}
+
+
+		<XTAdminMenu/>
+	} else {
+			<MudNavLink Href="/Login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Login</MudNavLink>
+	}
+</MudNavMenu>
+
+@code {
+	List<xtNavigation> _nav;
+}

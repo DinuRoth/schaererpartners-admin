@@ -1,0 +1,71 @@
+﻿@page "/List/Belegung"
+@using Heron.MudCalendar
+
+@inject IGUIHelper GUIHelper
+
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
+<h3>Belegung</h3>
+
+@if (Items.Count > 0) {
+    <MudCalendar Items="Items" ShowTodayButton="true" ItemClicked="ItemClicked" CellClicked="CellClicked" />
+    //
+} else {
+    <p>Keine Belegungen vorhanden</p>
+}
+
+
+@code {
+    private List<CalendarItem> Items { get; set; } = new ();
+    private Dictionary<Belegung, CalendarItem> Mapping { get; set; } = new ();
+
+    private async Task ItemClicked(CalendarItem item) {
+        var belegung = Mapping.FirstOrDefault (x => x.Value == item).Key;
+        var res = await GUIHelper.DoEdit (belegung);
+        if (res == IGUIHelper.EditResult.OK) {
+            belegung.Save ();
+            NavigationManager.Refresh (true);
+        } else if (res == IGUIHelper.EditResult.Delete) {
+            Items.Remove (Mapping[belegung]);
+            Mapping.Remove (belegung);
+        }
+    }
+
+    private async Task CellClicked(DateTime dateTime) {
+        Belegung belegung = new (Database);
+        dateTime = dateTime.AddHours (18);
+        belegung.StartDatumZeit = dateTime;
+        dateTime = dateTime.AddHours (4);
+        belegung.EndDatumZeit = dateTime;
+        var res = await GUIHelper.DoEdit (belegung);
+        if (res == IGUIHelper.EditResult.OK) {
+            belegung.Save ();
+            var calendarItem = new CalendarItem () {
+                    Start = belegung.StartDatumZeit,
+                    End = belegung.EndDatumZeit,
+                    Text = belegung.Belegung_Bez
+                };
+            Mapping.Add (belegung, calendarItem);
+            Items.Add (calendarItem);
+
+        }
+    }
+
+    override protected void OnParametersSet() {
+        base.OnInitialized ();
+        var belegungen = Database.ReadAll<Belegung> ();
+        foreach (var belegung in belegungen) {
+            var calendarItem = new CalendarItem () {
+                    Start = belegung.StartDatumZeit,
+                    End = belegung.EndDatumZeit,
+                    Text = belegung.Belegung_Bez
+                };
+            Mapping.Add (belegung, calendarItem);
+            Items.Add (calendarItem);
+        }
+    }
+
+    void IDisposable.Dispose() {
+    }
+}
