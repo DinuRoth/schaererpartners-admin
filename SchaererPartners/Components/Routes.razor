@@ -4,10 +4,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Routing
 
-<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(xTend.DBO).Assembly}">
+<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(xTend.DBO).Assembly }">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
-        
+
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>

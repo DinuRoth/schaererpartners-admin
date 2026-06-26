@@ -27,7 +27,7 @@
   
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\xTend\xTend\xTend.csproj" />
+    <ProjectReference Include="..\..\..\..\Engineering\xTend\xTend.csproj" />
   </ItemGroup>
 
 </Project>
